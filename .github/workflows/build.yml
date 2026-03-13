@@ -1,0 +1,32 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Code laden
+      uses: actions/checkout@v4
+
+    - name: Python einrichten
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Pakete installieren
+      run: pip install rawpy Pillow pyinstaller
+
+    - name: EXE bauen
+      run: |
+        pyinstaller --onefile --windowed --name "CR2_JPG_Converter_TIBorWeb" cr2_to_jpg_converter.py
+
+    - name: EXE herunterladen
+      uses: actions/upload-artifact@v4
+      with:
+        name: CR2_JPG_Converter_TIBorWeb
+        path: dist/CR2_JPG_Converter_TIBorWeb.exe
